@@ -60,7 +60,7 @@ class ParentViewController: UIViewController {
             changePosition(leftViewConstraint: leftConstraint, rightViewConstraint: currentConstraint, pointX: pointX)
             velocity = recognizer.velocity(in: recognizer.view)
         case .ended:
-            let pointX = self.view.frame.width + recognizer.translation(in: recognizer.view).x
+            let pointX = recognizer.translation(in: recognizer.view).x
             if let velocityX = velocity?.x, ParentViewController.caclTargetPoint(pointX: pointX, velocityX: velocityX) < view.frame.width / 2 {
                 //возврат назад
                 endSwipe(oldViewConstraint: leftConstraint, newViewConstraint: currentConstraint, positionForOld: .left, completion: nil)
@@ -123,15 +123,16 @@ class ParentViewController: UIViewController {
     }
     
     private func endSwipe(oldViewConstraint: NSLayoutConstraint, newViewConstraint: NSLayoutConstraint, positionForOld: Position, completion: (() -> Void)?) {
+        newViewConstraint.constant = 0
+        switch positionForOld {
+        case .left:
+            oldViewConstraint.constant = -self.view.frame.width
+        case .right:
+            oldViewConstraint.constant = self.view.frame.width
+        default: break
+        }
         UIView.animate(withDuration: 0.2, animations: {
-            newViewConstraint.constant = 0
-            switch positionForOld {
-            case .left:
-                oldViewConstraint.constant = -self.view.frame.width
-            case .right:
-                oldViewConstraint.constant = self.view.frame.width
-            default: break
-            }
+            self.view.layoutIfNeeded()
         }) { result in
             if let completion = completion {
                 completion()
