@@ -53,6 +53,7 @@ class ParentViewController: UIViewController {
     }
     
     dynamic private func handleLeftEdge(recognizer: UIPanGestureRecognizer) {
+        guard provider?.providePrev() != nil else { return }
         guard let leftConstraint = constraintToLeftView, let currentConstraint = constraintToCurrentView  else { return }
         switch recognizer.state {
         case .changed:
@@ -81,11 +82,12 @@ class ParentViewController: UIViewController {
                 }
             }
         default:
-            break
+            endSwipe(oldViewConstraint: leftConstraint, newViewConstraint: currentConstraint, positionForOld: .left, completion: nil)
         }
     }
     
     dynamic private func handleRightEdge(recognizer: UIPanGestureRecognizer) {
+        guard provider?.provideNext() != nil else { return }
         guard let rightConstraint = constraintToRightView, let currentConstraint = constraintToCurrentView  else { return }
         switch recognizer.state {
         case .changed:
@@ -113,7 +115,7 @@ class ParentViewController: UIViewController {
                 }
             }
         default:
-            break
+            endSwipe(oldViewConstraint: rightConstraint, newViewConstraint: currentConstraint, positionForOld: .right, completion: nil)
         }
     }
     
